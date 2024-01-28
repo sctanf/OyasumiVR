@@ -64,7 +64,7 @@ export class TurnOffLighthousesOnSteamVRStopAutomationService {
         );
         const devices = (await firstValueFrom(this.lighthouse.devices)).filter(
           (d) =>
-            (d.powerState === 'on' || d.powerState === 'unknown') &&
+            (d.powerState === 'on' || d.powerState === 'unknown' || d.powerState === 'booting') &&
             !this.lighthouse.isDeviceIgnored(d)
         );
         if (devices.length) {
