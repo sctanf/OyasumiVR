@@ -9,20 +9,20 @@ export class ValveIndexDisplayBrightnessControlDriver extends DisplayBrightnessC
   }
 
   async getBrightnessBounds(): Promise<[number, number]> {
-    return [20, 160];
+    return [-23, 237];
   }
 
   async getBrightnessPercentage(): Promise<number> {
-    let analogGain = await this.openvr.getAnalogGain();
-    analogGain = ensurePrecision(analogGain, 3);
-    return this.analogGainToPercentage(analogGain);
+    let gain = await this.openvr.getAnalogGain();
+    gain = ensurePrecision(gain, 3);
+    return this.gainToPercentage(gain);
   }
 
   async setBrightnessPercentage(percentage: number): Promise<void> {
     const bounds = await this.getBrightnessBounds();
     percentage = clamp(percentage, bounds[0], bounds[1]);
-    const analogGain = this.percentageToAnalogGain(percentage);
-    this.openvr.setAnalogGain(analogGain);
+    const gain = this.percentageToGain(percentage);
+    this.openvr.setAnalogGain(gain);
   }
 
   isAvailable(): Observable<boolean> {
@@ -32,8 +32,8 @@ export class ValveIndexDisplayBrightnessControlDriver extends DisplayBrightnessC
         return (
           status === 'INITIALIZED' &&
           !!hmd &&
-          hmd.manufacturerName === 'Valve' &&
-          hmd.modelNumber === 'Index'
+          hmd.manufacturerName === 'Bigscreen' &&
+          hmd.modelNumber === 'Beyond'
         );
       })
     );
@@ -96,6 +96,44 @@ export class ValveIndexDisplayBrightnessControlDriver extends DisplayBrightnessC
         sampleMap.get(lowerBound.toString())!,
         sampleMap.get(upperBound.toString())!,
         upperBound == lowerBound ? 0.5 : (percentage - lowerBound) / (upperBound - lowerBound)
+      ),
+      3
+    );
+  }
+
+  private gainToPercentage(gain: number): number {
+    if (gain >= 266) return ensurePrecision(
+      lerp(
+        100,
+        237,
+        (gain - 266) / (1023 - 266)
+      ),
+      3
+    );
+    return ensurePrecision(
+      lerp(
+        -23,
+        100,
+        gain / 266
+      ),
+      3
+    );
+  }
+
+  private percentageToGain(percentage: number): number {
+    if (percentage >= 100) return ensurePrecision(
+      lerp(
+        266,
+        1023,
+        (percentage - 100) / (237 - 100)
+      ),
+      3
+    );
+    return ensurePrecision(
+      lerp(
+        0,
+        266,
+        (percentage + 23) / (100 + 23)
       ),
       3
     );

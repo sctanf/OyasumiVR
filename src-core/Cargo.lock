@@ -2011,6 +2011,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
+name = "hidapi"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3b125253e27c9fd67beac20665348f4bfc5b488b5c8a1020610eeb7e6d205cde"
+dependencies = [
+ "cc",
+ "cfg-if",
+ "libc",
+ "pkg-config",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
 name = "html5ever"
 version = "0.25.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3365,6 +3378,7 @@ dependencies = [
  "enumset",
  "futures",
  "futures-util",
+ "hidapi",
  "human_bytes",
  "hyper 0.14.26",
  "lazy_static",
